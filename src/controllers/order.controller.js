@@ -39,6 +39,28 @@ export const OrderController = {
     }
   },
 
+  async createWithProducts(req, res) {
+    try {
+      const { products, ...orderData } = req.body; 
+      const order = await Order.create(orderData);
+      for (const product of products) {
+        await OrderProducts.create({
+          idOrder: order.id, 
+          idMenu: product.idMenu,
+          quantity: product.quantity,
+          priceAtPurchase: product.priceAtPurchase,
+          createdAt: new Date()
+        });
+      }
+      const createdOrder = await Order.findByPk(order.id, {
+        include: [{ model: OrderProducts, include: [Menu] }],
+      });
+      res.json(createdOrder);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
   async update(req, res) {
     try {
       const order = await Order.findByPk(req.params.id);

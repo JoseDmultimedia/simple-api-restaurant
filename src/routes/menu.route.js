@@ -9,4 +9,6 @@ router.post("/", MenuController.create);
 router.put("/:id", MenuController.update);
 router.delete("/:id", MenuController.delete);
 
+router.get("/plain/text-menu", MenuController.getMenuText);
+
 export default router;

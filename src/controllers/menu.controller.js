@@ -14,8 +14,7 @@ export const MenuController = {
     try {
       const menu = await Menu.findByPk(req.params.id);
 
-      if (!menu)
-        return res.status(404).json({ message: "Menu not found" });
+      if (!menu) return res.status(404).json({ message: "Menu not found" });
 
       res.json(menu);
     } catch (error) {
@@ -36,8 +35,7 @@ export const MenuController = {
     try {
       const menu = await Menu.findByPk(req.params.id);
 
-      if (!menu)
-        return res.status(404).json({ message: "Menu not found" });
+      if (!menu) return res.status(404).json({ message: "Menu not found" });
 
       await menu.update(req.body);
       res.json(menu);
@@ -50,13 +48,41 @@ export const MenuController = {
     try {
       const menu = await Menu.findByPk(req.params.id);
 
-      if (!menu)
-        return res.status(404).json({ message: "Menu not found" });
+      if (!menu) return res.status(404).json({ message: "Menu not found" });
 
       await menu.destroy();
       res.json({ message: "Menu deleted" });
     } catch (error) {
       res.status(500).json({ error: error.message });
+    }
+  },
+  async getMenuText(req, res) {
+    try {
+      const menus = await Menu.findAll();
+
+      const comidas = menus.filter((m) => m.category === "comida");
+      const bebidas = menus.filter((m) => m.category === "bebida");
+
+      let responseText = "Comidas:\n\n";
+
+      comidas.forEach((item) => {
+        responseText += `  ${item.name}: ${
+          item.description
+        } - ${item.price.toLocaleString("es-CO")} pesos\n`;
+      });
+
+      responseText += "\nBebidas:\n\n";
+
+      bebidas.forEach((item) => {
+        responseText += `  ${item.name} - ${item.price.toLocaleString(
+          "es-CO"
+        )} pesos\n`;
+      });
+
+      res.setHeader("Content-Type", "text/plain; charset=utf-8");
+      res.send(responseText);
+    } catch (error) {
+      res.status(500).send(`Error: ${error.message}`);
     }
   },
 };

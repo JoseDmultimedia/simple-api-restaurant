@@ -18,6 +18,7 @@ app.set("port", port);
 
 //Utilities
 app.use(express.json());
+app.use(express.text());
 app.use(cors());
 app.use(morgan("dev"));
 app.use(helmet());

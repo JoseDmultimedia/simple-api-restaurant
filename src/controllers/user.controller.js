@@ -21,6 +21,20 @@ export const UserController = {
     }
   },
 
+  async getByEmailText(req, res) {
+    try {
+      const user = await User.findOne({ where: { email: req.params.email } });  
+      if (!user)
+        return res.status(404).send("Usuario no encontrado");
+      const responseText = 
+        `Usuario encontrado: Id del usuario: ${user.id}\nNombre: ${user.name}\nEmail: ${user.email}`;
+      res.setHeader("Content-Type", "text/plain; charset=utf-8");
+      res.send(responseText);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    } 
+  },
+
   async getById(req, res) {
     try {
       const user = await User.findByPk(req.params.id);
@@ -38,6 +52,18 @@ export const UserController = {
     try {
       const user = await User.create(req.body);
       res.json(user);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  async createWithText(req, res) {
+    try {
+      const user = await User.create(req.body); 
+      const responseText = 
+        `Usuario creado exitosamente\nId del usuario: ${user.id}\nNombre: ${user.name}\nEmail: ${user.email}`;
+      res.setHeader("Content-Type", "text/plain; charset=utf-8");
+      res.send(responseText);
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

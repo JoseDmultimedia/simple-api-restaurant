@@ -56,6 +56,7 @@ export const MenuController = {
       res.status(500).json({ error: error.message });
     }
   },
+
   async getMenuText(req, res) {
     try {
       const menus = await Menu.findAll();
@@ -85,4 +86,20 @@ export const MenuController = {
       res.status(500).send(`Error: ${error.message}`);
     }
   },
+
+  async getMenuByIdText(req, res) {
+    try {
+      const menu = await Menu.findByPk(req.params.id);  
+      
+      if (!menu) return res.status(404).send("Menu no encontrado");
+
+      const responseText = `${menu.name}:\n${menu.description}\nPrecio: ${menu.price.toLocaleString("es-CO")} pesos`;
+      res.setHeader("Content-Type", "text/plain; charset=utf-8");
+      res.send(responseText);
+
+    } catch (error) {
+      res.status(500).send(`Error: ${error.message}`);
+    }
+  },
+
 };

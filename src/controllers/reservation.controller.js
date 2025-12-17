@@ -10,6 +10,21 @@ export const ReservationController = {
     }
   },
 
+  async getAllText(req, res) {
+    try {
+      const reservations = await Reservation.findAll();
+
+      const responseText = reservations.map(reservation => 
+        `Id de la reserva: ${reservation.id}\nFecha y hora: ${reservation.reservationDate}\nNúmero de personas: ${reservation.numberOfPeople}\nMesa número: ${reservation.tableNumber}`
+      ).join('\n\n');
+
+      res.setHeader("Content-Type", "text/plain; charset=utf-8");
+      res.send(responseText);
+    } catch (error) {
+      res.status(500).send(error.message);
+    }
+  },
+
   async getById(req, res) {
     try {
       const reservation = await Reservation.findByPk(req.params.id);
@@ -23,12 +38,38 @@ export const ReservationController = {
     }
   },
 
+  async getByIdText(req, res) {
+    try {
+      const reservation = await Reservation.findByPk(req.params.id);
+      if (!reservation)
+        return res.status(404).send("Reserva no encontrada");
+      const responseText =
+        `Id de la reserva: ${reservation.id}\nFecha y hora: ${reservation.reservationDate}\nNúmero de personas: ${reservation.numberOfPeople}\nMesa número: ${reservation.tableNumber}`
+      res.setHeader("Content-Type", "text/plain; charset=utf-8");
+      res.send(responseText);
+    } catch (error) {
+      res.status(500).send(error.message);
+    }
+  },
+
   async create(req, res) {
     try {
       const reservation = await Reservation.create(req.body);
       res.json(reservation);
     } catch (error) {
       res.status(500).json({ error: error.message });
+    }
+  },
+
+  async createWithText(req, res) {
+    try {
+      const reservation = await Reservation.create(req.body);
+      const responseText =
+        `Reserva creada exitosamente:\nId de la reserva: ${reservation.id}\nFecha y hora: ${reservation.reservationDate}\nNúmero de personas: ${reservation.numberOfPeople}\nMesa número: ${reservation.tableNumber}`;
+      res.setHeader("Content-Type", "text/plain; charset=utf-8");
+      res.send(responseText);
+    } catch (error) {
+      res.status(500).send(error.message);
     }
   },
 

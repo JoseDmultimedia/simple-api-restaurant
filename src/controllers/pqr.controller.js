@@ -10,6 +10,19 @@ export const PqrController = {
     }
   },
 
+  async getAllText(req, res) {
+    try {
+      const pqrs = await Pqr.findAll();
+      const responseText = pqrs.map(pqr => 
+        `Id del PQR: ${pqr.id}\nTitulo: ${pqr.subject}\nTipo de PQR: ${pqr.type}\nMensaje del usuario: ${pqr.message}`
+      ).join('\n\n');
+      res.setHeader("Content-Type", "text/plain; charset=utf-8");
+      res.send(responseText);
+    } catch (error) {
+      res.status(500).send(error.message);
+    } 
+  },
+
   async getById(req, res) {
     try {
       const pqr = await Pqr.findByPk(req.params.id);
@@ -23,10 +36,36 @@ export const PqrController = {
     }
   },
 
+  async getByIdText(req, res) {
+    try {
+      const pqr = await Pqr.findByPk(req.params.id);
+      if (!pqr)
+        return res.status(404).send("PQR no encontrado");
+      const responseText =
+        `Id del PQR: ${pqr.id}\nTitulo: ${pqr.subject}\nTipo de PQR: ${pqr.type}\nMensaje del usuario: ${pqr.message}`;
+      res.setHeader("Content-Type", "text/plain; charset=utf-8");
+      res.send(responseText);
+    } catch (error) {
+      res.status(500).send(error.message);
+    } 
+  },
+
   async create(req, res) {
     try {
       const pqr = await Pqr.create(req.body);
       res.json(pqr);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  async createWithText(req, res) {
+    try { 
+      const pqr = await Pqr.create(req.body);
+      const responseText =
+        `PQR creado exitosamente:\nId del PQR: ${pqr.id}\nTitulo: ${pqr.subject}\nTipo de PQR: ${pqr.type}\nMensaje del usuario: ${pqr.message}`;
+      res.setHeader("Content-Type", "text/plain; charset=utf-8");
+      res.send(responseText);
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
